@@ -7,6 +7,7 @@ classdef GCSHandler < handle
     end
     properties(Access=public)
         IO
+        Heartbeat
         Drone = struct('position', [0 0 0], ...
             'rotation', [0 0 0], ...
             'onGround', true, ...
@@ -42,9 +43,24 @@ classdef GCSHandler < handle
                 'BufferSize', 1,...
                 'NewMessageFcn', ...
                 @(~, msg) GCSHandler.uavPositionCallback(msg, obj));
+            
+                heartbeatmsg = io.Dialect.createmsg('HEARTBEAT');
+                heartbeatmsg.Payload.autopilot(:) = uint8(io.Dialect.enum2num('MAV_AUTOPILOT', 'MAV_AUTOPILOT_INVALID'));
+                heartbeatmsg.Payload.type(:) = uint8(io.Dialect.enum2num('MAV_TYPE', 'MAV_TYPE_GCS'));
+                heartbeatmsg.Payload.system_status(:) = uint8(io.Dialect.enum2num('MAV_STATE', 'MAV_STATE_ACTIVE'));
+                heartbeatmsg.Payload.base_mode(:) = uint8(bitor(io.Dialect.enum2num('MAV_MODE_FLAG', 'MAV_MODE_FLAG_GUIDED_ENABLED'),  ...
+                io.Dialect.enum2num('MAV_MODE_FLAG', 'MAV_MODE_FLAG_SAFETY_ARMED'))) ;
+
+                obj.Heartbeat = timer;
+                obj.Heartbeat.ExecutionMode = 'fixedRate';
+                obj.Heartbeat.Period = 2;
+                obj.Heartbeat.StartDelay = 0;
+                obj.Heartbeat.TimerFcn = @(~,~) io.sendmsg(heartbeatmsg);
+                start(obj.Heartbeat);
         end
         
-        function sendWaypoints(obj)
+        function sendWaypoints(obj, waypoints)
+            obj.Drone.waypoints = waypoints;
             obj.Drone.uploadComplete = false;
             obj.Drone.missionLength = length(obj.Drone.waypoints);
             dialect = obj.IO.Dialect;
@@ -54,9 +70,11 @@ classdef GCSHandler < handle
             msg.Payload.target_component(:) = 1;
             msg.Payload.count(:) = length(obj.Drone.waypoints);
             msg.Payload.mission_type(:) = enum2num(dialect, 'MAV_MISSION_TYPE',"MAV_MISSION_TYPE_MISSION");
-            obj.IO.sendmsg(msg);
+            obj.IO.sendmsg(msg, client);
         end
-        
+        function complete = isUploadComplete(obj)
+            complete = obj.Drone.uploadComplete;
+        end
         function active = isDroneActive(obj)
             elapsed = etime(clock, obj.Drone.lastHeartbeat);
             active = elapsed < 2;
@@ -68,20 +86,21 @@ classdef GCSHandler < handle
             delete(obj.MissionAckSubscriber);
             delete(obj.HeartbeatSubscriber);
             delete(obj.UAVPositionSubscriber);
+            stop(obj.Heartbeat);
+            delete(obj.Heartbeat);
+            
         end
     end
 
     methods(Static)
         function missionRequestCallback(msg, handler)
-            disp("MISSION_REQUEST")
             %TODO: RESEND MESSAGE IF TIMEOUT
             dialect = handler.IO.Dialect;
             client = mavlinkclient(handler.IO, msg.SystemID, msg.ComponentID);
             outMsg = dialect.createmsg('MISSION_ITEM_INT');
             
             outMsg.Payload.target_system(:) = 1;
-            disp(msg.SystemID);
-            disp(msg.ComponentID);
+            
             outMsg.Payload.target_component(:) = 1;
             outMsg.Payload.seq(:) = msg.Payload.seq;
             outMsg.Payload.frame(:) = enum2num(handler.IO.Dialect,'MAV_FRAME',"MAV_FRAME_GLOBAL");
@@ -108,18 +127,19 @@ classdef GCSHandler < handle
             outMsg.Payload.z(:) = handler.Drone.waypoints(msg.Payload.seq + 1, 3);
             outMsg.Payload.mission_type(:) = enum2num(handler.IO.Dialect, 'MAV_MISSION_TYPE', "MAV_MISSION_TYPE_MISSION"); 
             end
-            handler.IO.sendmsg(outMsg);
+            handler.IO.sendmsg(outMsg, client);
         end
         function missionAckCallback(msg, handler)
             handler.Drone.uploadComplete = true;
-            disp("ACK");
         end
         function heartbeatCallback(msg, handler)
             %TODO: ADD TIMER TO DETECT IF DRONE IS STILL ACTIVE
             handler.Drone.lastHeartbeat = clock;
         end
         function uavPositionCallback(msg, handler)
-            handler.Drone.position = [msg.Payload.lat/10^7 msg.Payload.lon/10^7 msg.Payload.alt/1000];
+            handler.Drone.position = [double(msg.Payload.lat)/10^7 ...
+                double(msg.Payload.lon)/10^7 ...
+                double(msg.Payload.alt) /1000];
         end
         
     end

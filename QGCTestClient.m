@@ -17,33 +17,18 @@ Heartbeat.ExecutionMode = 'fixedRate';
 Heartbeat.Period = 2;
 Heartbeat.StartDelay = 0;
 Heartbeat.TimerFcn = (@(~,~) heart(io, heartbeatmsg));
-client = mavlinkclient(io, 255, 0);
-
 
 start(Heartbeat);
+msg = dialect.createmsg('MISSION_COUNT');
+            msg.Payload.target_system(:) = 1;
+            msg.Payload.target_component(:) = 1;
+            msg.Payload.count(:) = length(obj.Drone.waypoints);
+            msg.Payload.mission_type(:) = enum2num(dialect, 'MAV_MISSION_TYPE',"MAV_MISSION_TYPE_MISSION");
+            obj.IO.sendmsg(msg);
 
+io.sendmsg(request);
 
-pause(15);
-b = mavlinksub(io, 'BufferSize', 10, 'NewMessageFcn', @(~, msg) disp("B: " + msg.SystemID));
-v = [41.8839798 -87.6569366 15];
-pause(10);
-% for i = 1:60
-    
-    
-    
-%     gpsRawIntMsg = io.Dialect.createmsg('GPS_RAW_INT');
-%                     gpsRawIntMsg.Payload.fix_type = uint8(enum2num(io.Dialect,'GPS_FIX_TYPE',"GPS_FIX_TYPE_3D_FIX"));
-%                     %gpsRawIntMsg.Payload.time_usec = UAVState.gps.time_usec;
-%                     gpsRawIntMsg.Payload.lat(:) = int32(v(1)*10e7);
-%                     gpsRawIntMsg.Payload.lon(:) = int32(v(2)*10e7);
-%                     gpsRawIntMsg.Payload.alt(:) = int32(v(3));
-%                     gpsRawIntMsg.Payload.eph(:) = uint16(80);
-%                     gpsRawIntMsg.Payload.epv(:) = uint16(80);
-%                     gpsRawIntMsg.Payload.vel(:) = uint16(72);
-%                     gpsRawIntMsg.Payload.cog(:) = uint16(676);
-%                     
-%                    sendudpmsg(io, gpsRawIntMsg,'127.0.0.1',int32(str2double(info_con(end-4:end))));
-% end
+pause(40);
 delete(a);
 delete(b);
 stop(Heartbeat);
@@ -51,17 +36,6 @@ delete(Heartbeat);
 io.disconnect();
 
 function heart(a, b)
-    disp("Heart");
+    listTopics(a)
     sendudpmsg(a,b, '127.0.0.1', 14550);
-end
-
-
-function send(io)
-    dialect = io.Dialect;
-    outMsg = dialect.createmsg('MISSION_ITEM_INT');
-
-    outMsg.Payload.target_system = 255;
-    outMsg.Payload.target_component = 0;
-    
-    io.sendmsg(outMsg);
 end
