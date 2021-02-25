@@ -18,6 +18,7 @@ sv = validatorOccupancyMap(ss);
 sv.Map = omap;
 sv.ValidationDistance = 0.01;
 
+show(omap)
 %create rrt star planner and plan the route
 planner = plannerRRTStar(ss, sv);
 planner.ContinueAfterGoalReached = true;
@@ -28,8 +29,9 @@ planner.MaxConnectionDistance =  5;
 pthObj = plan(planner,start,goal);
 
 %smooth the route, removing unnecassary waypoints
-pthObj = ExampleHelperUAVPathSmoothing(ss,sv,pthObj);
-
+if pthObj.NumStates > 2
+    pthObj = ExampleHelperUAVPathSmoothing(ss,sv,pthObj);
+end
 %show route on figure
 % omap.show;
 % hold on;
