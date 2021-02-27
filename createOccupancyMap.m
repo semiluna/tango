@@ -1,37 +1,49 @@
 function omap = createOccupancyMap()
 
-buildingDataENU = load("work/test.mat").buildingDataENU;
-polygonCorners = [];
+% vertices = load("vertices.mat").vertices;
+% newV = [];
+% for i=1:83
+%     bv = [];
+%     for j=1:63
+%         x = vertices(i, 2*j-1);
+%         y = vertices(i, 2*j);
+%         if x ~= 0 || y ~= 0
+%             bv{j} = [x;y];
+%         end
+%     end
+%     newV{i} = bv;
+% end
+% save("newVertices.mat", "newV");
 
-polygonCorners{1} = buildingDataENU{1}(4:-1:1,:);
-polygonCorners{2} = buildingDataENU{2}(2:5,:);
-polygonCorners{3} = buildingDataENU{3}(2:10,:);
-polygonCorners{4} = buildingDataENU{4}(2:9,:);
-polygonCorners{5} = buildingDataENU{5}(1:end-1,:);
-polygonCorners{6} = buildingDataENU{6}(1:end-1,:);
-polygonCorners{7} = buildingDataENU{7}(1:end-1,:);
-polygonCorners{8} = buildingDataENU{8}(2:end-1,:);
-polygonCorners{9} = buildingDataENU{9}(1:end-1,:);
-polygonCorners{10} = buildingDataENU{10}(1:end-1,:);
-polygonCorners{11} = buildingDataENU{11}(1:end-2,:);
+vertices = load("newVertices.mat").newV;
 
-omap = binaryOccupancyMap(600, 600);
+omap = binaryOccupancyMap(1200, 1200);
 
 queryPointsX = [];
 queryPointsY = [];
-for i = 1:600
-    for j = 1:600
-        queryPointsX((i-1)*600+j) = i-300;
-        queryPointsY((i-1)*600+j) = j-300;
+for i = 1:1200
+    for j = 1:1200
+        queryPointsX((i-1)*1200+j) = i-600;
+        queryPointsY((i-1)*1200+j) = j-600;
     end
 end
-for i=1:length(polygonCorners)
-    corners = polygonCorners(i);
-    in = inpolygon(queryPointsX, queryPointsY, corners{1}(:, 1), corners{1}(:, 2));
-    succX = queryPointsX(in) + 300;
-    succY = queryPointsY(in) + 300;
 
-    setOccupancy(omap, transpose([succX; succY]), 1);
+for i=1:length(vertices)
+    corners = vertices(i);
+    corners = corners{1};
+    xcorners = [];
+    ycorners = [];
+    for j=1:length(corners)
+        xcorners(j) = corners{j}(1);
+        ycorners(j) = corners{j}(2);
+    end
+    in = inpolygon(queryPointsX, queryPointsY, xcorners, ycorners);
+    succX = queryPointsX(in) + 600;
+    succY = queryPointsY(in) + 600;
+    if ~isempty(succX)
+        setOccupancy(omap, transpose([succX; succY]), 1);
+    end
+    
 end
 
-inflate(omap, 2)
+inflate(omap, 3);

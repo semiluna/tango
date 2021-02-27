@@ -32,11 +32,12 @@ pthObj = plan(planner,start,goal);
 if pthObj.NumStates > 2
     pthObj = ExampleHelperUAVPathSmoothing(ss,sv,pthObj);
 end
+
 %show route on figure
-% omap.show;
-% hold on;
-% plot(solnInfo.TreeData(:,1),solnInfo.TreeData(:,2), '.-'); % tree expansion
-% plot(pthObj.States(:,1),pthObj.States(:,2),'r-','LineWidth',2); % draw path
+omap.show;
+hold on;
+%plot(solnInfo.TreeData(:,1),solnInfo.TreeData(:,2), '.-'); % tree expansion
+plot(pthObj.States(:,1),pthObj.States(:,2),'r-','LineWidth',2); % draw path
 
 %untransform back to world coords
 route = pthObj.States(:,1:2);
