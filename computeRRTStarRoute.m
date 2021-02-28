@@ -2,9 +2,10 @@ function route = computeRRTStarRoute(start, goal)
 
 %create occupancy map if not already defined
 if ~exist('omap', 'var')
+    disp("Omapping")
     omap = createOccupancyMap();
 end
-
+disp("got omap")
 %transform start and goal such that they are on the omap coord frame
 start = start + omap.GridSize/2;
 goal = goal + omap.GridSize/2;
@@ -18,12 +19,11 @@ sv = validatorOccupancyMap(ss);
 sv.Map = omap;
 sv.ValidationDistance = 0.01;
 
-show(omap)
 %create rrt star planner and plan the route
 planner = plannerRRTStar(ss, sv);
 planner.ContinueAfterGoalReached = true;
-planner.MaxIterations = 2500;
-planner.MaxConnectionDistance =  5;
+planner.MaxIterations = 2000;
+planner.MaxConnectionDistance =  30;
 
 %plan the route
 pthObj = plan(planner,start,goal);
@@ -34,10 +34,9 @@ if pthObj.NumStates > 2
 end
 
 %show route on figure
-% omap.show;
-% hold on;
-% plot(solnInfo.TreeData(:,1),solnInfo.TreeData(:,2), '.-'); % tree expansion
-% plot(pthObj.States(:,1),pthObj.States(:,2),'r-','LineWidth',2); % draw path
+ omap.show;
+ hold on;
+ plot(pthObj.States(:,1),pthObj.States(:,2),'r-','LineWidth',2); % draw path
 
 %untransform back to world coords
 route = pthObj.States(:,1:2);

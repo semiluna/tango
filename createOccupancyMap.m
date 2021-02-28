@@ -15,7 +15,7 @@ function omap = createOccupancyMap()
 % end
 % save("newVertices.mat", "newV");
 
-vertices = load("newVertices.mat").newV;
+vertices = load("work/newVertices.mat").newV;
 
 omap = binaryOccupancyMap(1200, 1200);
 
@@ -35,7 +35,7 @@ for i=1:length(vertices)
     ycorners = [];
     for j=1:length(corners)
         xcorners(j) = corners{j}(1);
-        ycorners(j) = -corners{j}(2);
+        ycorners(j) = corners{j}(2);
     end
     in = inpolygon(queryPointsX, queryPointsY, xcorners, ycorners);
     succX = queryPointsX(in) + 600;
