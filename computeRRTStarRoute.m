@@ -1,4 +1,4 @@
-function route = computeAStarRoute(start, goal)
+function route = computeRRTStarRoute(start, goal)
 
 %create occupancy map if not already defined
 if ~exist('omap', 'var')
