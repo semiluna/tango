@@ -46,4 +46,6 @@ for i=1:length(vertices)
     
 end
 
-inflate(omap, 3);
+inflate(omap, 2);
+
+save("omap.mat", "omap");
