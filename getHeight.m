@@ -4,8 +4,8 @@ function z = getHeight(x,y)
 %   regular 10m x and y intervals across the ground. The function
 %   interpolates between the heights of the corners of the square the input
 %   is in.
-    x_factor = (x/10) - floor(x/10)
-    y_factor = (y/10) - floor(y/10)
+    x_factor = (x/10) - floor(x/10);
+    y_factor = (y/10) - floor(y/10);
     
     file_text = fileread('heightmap.txt');
     lines = splitlines(file_text);
@@ -17,7 +17,7 @@ function z = getHeight(x,y)
     else
         coords1 = split(lines(line_num), ", ");
     end
-    if line_num == 566
+    if line_num == 107
         coords2 = split(lines(line_num), ", ");
     else
         coords2 = split(lines(line_num+1), ", ");
@@ -30,7 +30,7 @@ function z = getHeight(x,y)
         lxly = coords1(coord_num);
         hxly = coords2(coord_num);
     end
-    if coord_num == 331
+    if coord_num == 61
         lxhy = coords1(coord_num);
         hxhy = coords2(coord_num);
     else
