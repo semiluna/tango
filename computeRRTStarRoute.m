@@ -1,11 +1,10 @@
 function route = computeRRTStarRoute(start, goal)
 
-%create occupancy map if not already defined
+%load occupancy map if not already defined
 if ~exist('omap', 'var')
-    disp("Omapping")
-    omap = createOccupancyMap();
+    omap = load("work/omap.mat").omap;
 end
-disp("got omap")
+
 %transform start and goal such that they are on the omap coord frame
 start = start + omap.GridSize/2;
 goal = goal + omap.GridSize/2;
