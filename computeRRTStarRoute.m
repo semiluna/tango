@@ -6,8 +6,8 @@ if ~exist('omap', 'var')
 end
 
 %translate input coords to world coords
-start = LatLongToWorld(start);
-goal = LatLongToWorld(goal);
+start = LongLatToWorld(start);
+goal = LongLatToWorld(goal);
 
 %transform start and goal such that they are on the omap coord frame
 start = start + omap.GridSize/2;
@@ -37,9 +37,9 @@ if pthObj.NumStates > 2
 end
 
 %show route on figure
- %omap.show;
- %hold on;
- %plot(pthObj.States(:,1),pthObj.States(:,2),'r-','LineWidth',2); % draw path
+%  omap.show;
+%  hold on;
+%  plot(pthObj.States(:,1),pthObj.States(:,2),'r-','LineWidth',2); % draw path
 
 %untransform back to world coords
 basicRoute = pthObj.States(:,1:2);
@@ -51,9 +51,9 @@ endHeight = getHeight(basicRoute(length(basicRoute),1), basicRoute(length(basicR
 
 %convert from world coords back to latlong
 for i=1:length(basicRoute)
-    latLong = WorldToLatLong([basicRoute(i,1), basicRoute(i,2)]);
-    basicRoute(i,1) = latLong(1);
-    basicRoute(i,2) = latLong(2);
+    longLat = WorldToLongLat([basicRoute(i,1), basicRoute(i,2)]);
+    basicRoute(i,1) = longLat(1);
+    basicRoute(i,2) = longLat(2);
 end
 
 %add z coords to all points and put into nx3 matrix
