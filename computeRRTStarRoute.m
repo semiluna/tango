@@ -39,7 +39,7 @@ sv.ValidationDistance = 0.01;
 planner = plannerRRTStar(ss, sv);
 planner.ContinueAfterGoalReached = true;
 planner.MaxIterations = 500;
-planner.MaxConnectionDistance =  30;
+planner.MaxConnectionDistance = 50;
 
 maxTries = 7;
 while maxTries > 0
