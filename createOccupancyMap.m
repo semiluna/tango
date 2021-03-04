@@ -48,4 +48,11 @@ end
 
 inflate(omap, 2);
 
+topLeft = [-560, -310];
+botRight = [520, 310];
+
+xPoints = [];
+yPoints = [];
+
+
 save("omap.mat", "omap");
