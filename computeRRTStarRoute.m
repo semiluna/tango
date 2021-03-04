@@ -22,6 +22,12 @@ goal = goal + omap.GridSize/2;
 start(3) = 0;
 goal(3)=0;
 
+if start(1) < 40 || start(1) > 1120 || goal(1) < 40 || goal(1) > 1120 || start(2) < 290 || start(2) > 910 || goal(2) < 290 || goal(2) > 910
+    route = -3;
+    disp("Start or goal state was outside the map");
+    return;
+end
+
 %create the state space and validator, needed for the planner
 ss = stateSpaceSE2;
 ss.StateBounds = [omap.XWorldLimits; omap.YWorldLimits; [-pi pi]];
