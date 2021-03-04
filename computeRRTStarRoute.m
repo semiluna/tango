@@ -1,8 +1,13 @@
-function route = computeRRTStarRoute(start, goal, useLatLongCoords)
+function route = computeRRTStarRoute(start, goal, useLatLongCoords, useCache)
 
 %default to worldCoords
 if ~exist('useLatLongCoords', 'var')
     useLatLongCoords = true;
+end
+
+%default to using cached results
+if ~exist('useCache', 'var')
+    useCache = true;
 end
 
 %load occupancy map if not already defined
@@ -22,58 +27,25 @@ goal = goal + omap.GridSize/2;
 start(3) = 0;
 goal(3)=0;
 
+%ensure both the start and goal are inside the map
 if start(1) < 40 || start(1) > 1120 || goal(1) < 40 || goal(1) > 1120 || start(2) < 290 || start(2) > 910 || goal(2) < 290 || goal(2) > 910
     route = -3;
     disp("Start or goal state was outside the map");
     return;
 end
 
-%create the state space and validator, needed for the planner
-ss = stateSpaceSE2;
-ss.StateBounds = [omap.XWorldLimits; omap.YWorldLimits; [-pi pi]];
-sv = validatorOccupancyMap(ss);
-sv.Map = omap;
-sv.ValidationDistance = 0.01;
-
-%create rrt star planner and plan the route
-planner = plannerRRTStar(ss, sv);
-planner.ContinueAfterGoalReached = true;
-planner.MaxIterations = 500;
-planner.MaxConnectionDistance = 50;
-
-maxTries = 7;
-while maxTries > 0
-    
-    %plan the route
-    try
-        pthObj = plan(planner,start,goal);
-    catch
-        %bad input inside building
-        route = -1;
-        disp("Start or goal state was inside a building");
-        return;
-    end
-    
-    %if we found a path, great
-    if pthObj.NumStates > 0
-        break
-    end
-    
-    %otherwise try again with more iterations
-    planner.MaxIterations = round(planner.MaxIterations * 1.5);
-    maxTries = maxTries - 1;
+%plan route
+if useCache
+    cachedPlanner = memoize(@planRRTStarPath);
+    pthObj = cachedPlanner(start, goal);
+else
+    pthObj = planRRTStarPath(start, goal);
 end
 
-%if we couldn't find a path
-if pthObj.NumStates == 0
-    route = -2;
-    disp("Couldn't find a valid path before timeout");
-    return;
-end
-
-%smooth the route, removing unnecassary waypoints
-if pthObj.NumStates > 2
-    pthObj = ExampleHelperUAVPathSmoothing(ss,sv,pthObj);
+%check for errors from planner
+if pthObj == -1 || pthObj == -2
+   route = pthObj;
+   return;
 end
 
 %show route on figure
