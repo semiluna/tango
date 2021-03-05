@@ -38,6 +38,11 @@ end
 if useCache
     cachedPlanner = memoize(@planRRTStarPath);
     pthObj = cachedPlanner(start, goal);
+    
+    %make sure we are not using a cached version of a failed hit
+    if pthObj == -2
+        pthObj = planRRTStarPath(start, goal);
+    end
 else
     pthObj = planRRTStarPath(start, goal);
 end
@@ -49,9 +54,9 @@ if pthObj == -1 || pthObj == -2
 end
 
 %show route on figure
- omap.show;
- hold on;
- plot(pthObj.States(:,1),pthObj.States(:,2),'r-','LineWidth',2); % draw path
+%  omap.show;
+%  hold on;
+%  plot(pthObj.States(:,1),pthObj.States(:,2),'r-','LineWidth',2); % draw path
 
 %untransform back to world coords
 basicRoute = pthObj.States(:,1:2);

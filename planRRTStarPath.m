@@ -1,5 +1,5 @@
 function route = planRRTStarPath(start, goal)
-disp("YOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO");
+
 %load occupancy map if not already defined
 if ~exist('omap', 'var')
     omap = load("work/omap.mat").omap;
@@ -18,7 +18,7 @@ planner.ContinueAfterGoalReached = true;
 planner.MaxIterations = 500;
 planner.MaxConnectionDistance = 50;
 
-maxTries = 7;
+maxTries = 10;
 while maxTries > 0
     
     %plan the route
@@ -36,9 +36,14 @@ while maxTries > 0
         break
     end
     
-    %otherwise try again with more iterations
+    %otherwise try again with more iterations 
+    %and maybe higher connection distance
     planner.MaxIterations = round(planner.MaxIterations * 1.5);
     maxTries = maxTries - 1;
+    if maxTries <= 3
+        planner.MaxConnectionDistance = planner.MaxConnectionDistance + 10
+    end
+        
 end
 
 %if we couldn't find a path
