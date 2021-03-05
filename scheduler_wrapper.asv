@@ -1,6 +1,8 @@
 % add missions from user interface 
 
-function scheduler_wrapper() 
+function scheduler_wrapper()
+    cachedDistance = memoize(@compute_eucldian_distance);
+    
     if ~isempty(hApp.newMission)
 
         newMission = hApp.newMission;
@@ -28,6 +30,7 @@ function scheduler_wrapper()
             indexStart = coord_map.values(start);
         else
             indexStart = nodes + l;
+            nodes = nodes + 1;
             coord_map(start) = indexStart;
         end
         
@@ -35,10 +38,10 @@ function scheduler_wrapper()
             indexStart = coord_map.values(goal);
         else
             indexGoal = nodes + 2;
+            nodes = nodes + 1;
             coord_map(goal) = indexGoal;
         end
         
-        nodes = nodes + 2;
         
         % add distances to the adjacency matrix
         
@@ -66,13 +69,15 @@ function scheduler_wrapper()
             mission = mission_queue(index); % pair of indices (indexStart, indexGoal)
             indexNextStart = mission(2);
             
-            if ~route_cache.isKey([indexGoal indexNextStart])
-                nextRoute = computeRRTStarRoute(indexGoal, indexNextStart);
+            nextRoute = computeRRTStarRoute(indexGoal, indexNextStart);
+            distance_cache(indexGoal, indexNextStart) = cachedDistance(route);
+            distance_cache(indexNextStart, indexGoal) = distance_cache(indexGoal, indexNextStart);
+            
                 % route_cache([indexGoal indexNextStart]) = nextRoute;
                 % route_cache([indexNextStart indexGoal]) = nextRoute;
                 % distance_cache(indexGoal, indexNextStart) = compute_euclidian_distance(route);
-                % 5distance_cache(indexNextStart, indexGoal) = distance_cache(indexGoal, indexNextStart);
-            end       
+                % distance_cache(indexNextStart, indexGoal) = distance_cache(indexGoal, indexNextStart);
+              
         end
         
         
