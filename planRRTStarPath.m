@@ -41,7 +41,7 @@ while maxTries > 0
     planner.MaxIterations = round(planner.MaxIterations * 1.5);
     maxTries = maxTries - 1;
     if maxTries <= 3
-        planner.MaxConnectionDistance = planner.MaxConnectionDistance + 10
+        planner.MaxConnectionDistance = planner.MaxConnectionDistance + 10;
     end
         
 end
