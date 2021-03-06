@@ -54,9 +54,9 @@ if pthObj == -1 || pthObj == -2
 end
 
 %show route on figure
-%  omap.show;
-%  hold on;
-%  plot(pthObj.States(:,1),pthObj.States(:,2),'r-','LineWidth',2); % draw path
+  omap.show;
+  hold on;
+  plot(pthObj.States(:,1),pthObj.States(:,2),'r-','LineWidth',2); % draw path
 
 %untransform back to world coords
 basicRoute = pthObj.States(:,1:2);
