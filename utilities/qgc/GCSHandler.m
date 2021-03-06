@@ -14,19 +14,24 @@ classdef GCSHandler < handle
             'waypoints', [], ...
             'missionLength', 0, ...
             'systemID', 1, ...
-            'uploadComplete', false, ...
+            'uploadComplete', true, ...
             'lastHeartbeat', clock);
         MissionRequestSubscriber
         MissionAckSubscriber
         HeartbeatSubscriber
         UAVPositionSubscriber
+        UAVStateSubscriber
+        PosCallback
+        LandCallback
     end
     
     methods
-        function obj = GCSHandler(io)
+        function obj = GCSHandler(io, posCallback, landCallback)
             %GCSHandler Construct an instance of this class
             %   Detailed explanation goes here
             obj.IO = io;
+            obj.PosCallback = posCallback;
+            obj.LandCallback = landCallback;
             obj.MissionRequestSubscriber = mavlinksub(io, 'MISSION_REQUEST_INT', ...
                 'BufferSize', 1, ...
                 'NewMessageFcn', ...
@@ -43,6 +48,11 @@ classdef GCSHandler < handle
                 'BufferSize', 1,...
                 'NewMessageFcn', ...
                 @(~, msg) GCSHandler.uavPositionCallback(msg, obj));
+            
+            obj.UAVStateSubscriber = mavlinksub(io, 'EXTENDED_SYS_STATE', ...
+                'BufferSize', 10, ...
+                'NewMessageFcn', ...
+                @(~, msg) GCSHandler.uavStateCallback(msg, obj));
             
                 heartbeatmsg = io.Dialect.createmsg('HEARTBEAT');
                 heartbeatmsg.Payload.autopilot(:) = uint8(io.Dialect.enum2num('MAV_AUTOPILOT', 'MAV_AUTOPILOT_INVALID'));
@@ -86,6 +96,7 @@ classdef GCSHandler < handle
             delete(obj.MissionAckSubscriber);
             delete(obj.HeartbeatSubscriber);
             delete(obj.UAVPositionSubscriber);
+            delete(obj.UAVStateSubscriber);
             stop(obj.Heartbeat);
             delete(obj.Heartbeat);
             
@@ -95,6 +106,7 @@ classdef GCSHandler < handle
     methods(Static)
         function missionRequestCallback(msg, handler)
             %TODO: RESEND MESSAGE IF TIMEOUT
+            
             dialect = handler.IO.Dialect;
             client = mavlinkclient(handler.IO, msg.SystemID, msg.ComponentID);
             outMsg = dialect.createmsg('MISSION_ITEM_INT');
@@ -140,8 +152,16 @@ classdef GCSHandler < handle
             handler.Drone.position = [double(msg.Payload.lat)/10^7 ...
                 double(msg.Payload.lon)/10^7 ...
                 double(msg.Payload.alt) /1000];
+            handler.posCallback(handler.Drone.position);
+        end
+        function uavStateCallback(msg, handler)
+            newState = msg.Payload.landed_state == enum2num(handler.IO.Dialect, 'MAV_LANDED_STATE', "MAV_LANDED_STATE_ON_GROUND");
+            if(~handler.Drone.onGround && newState)
+                handler.LandCallback();
+            end
+            handler.Drone.onGround = ...
+                newState;
         end
         
     end
 end
-
