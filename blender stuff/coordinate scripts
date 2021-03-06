@@ -1,0 +1,61 @@
+import bpy
+import bmesh
+from mathutils import Vector
+
+def getVertices():
+    # Get the active mesh
+    obj = bpy.context.edit_object
+    me = obj.data
+    # Get a BMesh representation
+    bm = bmesh.from_edit_mesh(me)
+    bm.faces.active = None
+    # Modify the BMesh, can do anything here...
+    for v in bm.verts:
+        if v.select:
+            print(tuple(v.co) )
+            
+def h():
+    with open("C:\\Users\\weath\\OneDrive - University of Cambridge\\Comp Sci. 1B\\Group Project\\blender stuff\\vertices.txt", "w") as f:
+        for obj in bpy.context.scene.objects:
+            try:
+                obj_dat = obj.data
+                f.write(obj.name + ":\n")
+                bm = bmesh.from_edit_mesh(obj_dat)
+                bm.faces.active = None
+                for v in bm.verts:
+                    f.write(str(tuple(v.co)) + "\n")
+                f.write("\n\n")
+            except Exception as err:
+                print("Error: {0}".format(err))
+
+def obj_ray_cast(obj, matrix, ray_origin, ray_target):
+    """Wrapper for ray casting that moves the ray into object space"""
+    # get the ray relative to the object
+    matrix_inv        = matrix.inverted()
+    ray_origin_obj    = matrix_inv @ ray_origin
+    ray_target_obj    = matrix_inv @ ray_target
+    ray_direction_obj = ray_target_obj - ray_origin_obj
+    # cast the ray
+    success, location, normal, face_index = obj.ray_cast(ray_origin_obj, ray_direction_obj)
+    if success:
+        return location, normal, face_index
+    else:
+        return None, None, None
+
+def heightMap(obj):
+    with open("C:\\Users\\weath\\OneDrive - University of Cambridge\\Comp Sci. 1B\\Group Project\\blender stuff\\heightmap.txt", "w") as f:
+        for x in range(-55, 52):
+            for y in range(-30, 31):
+                location, _, _ = obj_ray_cast(obj, obj.matrix_world, Vector((10*x,(10*y)-44.9522,0)), Vector((10*x,(10*y)-44.9522,100)))
+                if location != None:
+                    location = obj.matrix_world @ location
+                    location = location + Vector((0,44.9522,0))
+                    location = "(" + str(round(location[0])) + "," + str(round(location[1])) + "," + str(location[2]) + ")"
+                f.write(location)
+                if y != 30:
+                    f.write(", ")
+                print(location)
+            if x != 51:
+                f.write("\n")
+
+# heightMap(bpy.data.objects['EXPORT_GOOGLE_SAT_WM'])
