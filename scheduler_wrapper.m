@@ -1,39 +1,41 @@
 % add missions from user interface 
 
 function schedule = scheduler_wrapper(newMission, coord_map, distance_cache, gcDistance, mission_queue, left, right)
-    cachedDistance = memoize(@compute_eucldian_distance);
+    cachedDistance = memoize(@compute_euclidian_distance);
     
     start = newMission(1,:);
     goal = newMission(2,:);
+    
+    start_key = num2str(start);
+    goal_key = num2str(goal);
 
     % start and goal are longitude and latitude, groundControl is the
     % middle of the map
 
     route = computeRRTStarRoute(start, goal);
 
-    groundControl = [0 0];
+    groundControl = [52.20954726481548, 0.09000709627050027];
 
     gcDistancePickup = computeRRTStarRoute(groundControl, start);
     gcDistanceDelivery = computeRRTStarRoute(goal, groundControl);
 
-    nodes = coord_map.size();
-
+    nodes = coord_map.size(1);
     % now indexStart is the index of point start and indexGoal is the index of point goal
 
-    if coord_map.isKey(start)
-        indexStart = coord_map.values(start);
+    if isKey(coord_map, start_key)
+        indexStart = coord_map(start_key);
     else
-        indexStart = nodes + l;
+        indexStart = nodes + 1;
         nodes = nodes + 1;
-        coord_map(start) = indexStart;
+        coord_map(start_key) = indexStart;
     end
-
-    if coord_map.isKey(goal)
-        indexStart = coord_map.values(goal);
+    
+    if isKey(coord_map, goal_key)
+        indexGoal = coord_map(goal_key);
     else
-        indexGoal = nodes + 2;
+        indexGoal = nodes + 1;
         nodes = nodes + 1;
-        coord_map(goal) = indexGoal;
+        coord_map(goal_key) = indexGoal;
     end
 
 
@@ -61,9 +63,11 @@ function schedule = scheduler_wrapper(newMission, coord_map, distance_cache, gcD
 
    % add read mission to the mission queue
 
-    mission_queue(right) = [indexStart indexGoal];
-    right = right + 1;
+%     mission_queue(right) = [indexStart indexGoal];
+    
+    mission_queue = cat(1, mission_queue, [indexStart indexGoal]);
 
+    right = right + 1;
     solution = max_time_matching(right - left, nodes, 100, mission_queue, distance_cache, gcDistance);
     
     % what do to with the solution?
