@@ -17,8 +17,8 @@ end
 
 %translate input coords to world coords
 if useLatLongCoords
-    start = LongLatToWorld(start);
-    goal = LongLatToWorld(goal);
+    start = LatLongToWorld(start);
+    goal = LatLongToWorld(goal);
 end
 
 %transform start and goal such that they are on the omap coord frame
@@ -69,7 +69,7 @@ endHeight = getHeight(basicRoute(length(basicRoute),1), basicRoute(length(basicR
 %convert from world coords back to latlong
 if useLatLongCoords
     for i=1:length(basicRoute)
-        longLat = WorldToLongLat([basicRoute(i,1), basicRoute(i,2)]);
+        longLat = WorldToLatLong([basicRoute(i,1), basicRoute(i,2)]);
         basicRoute(i,1) = longLat(1);
         basicRoute(i,2) = longLat(2);
     end
