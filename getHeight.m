@@ -1,7 +1,7 @@
 function z = getHeight(x,y)
-%GETHEIGHT obtains z coordinate for a given x and y
-%   Uses a heightmap file, which holds a list of coordinates taken at
-%   regular 10m x and y intervals across the ground. The function
+%GETHEIGHT obtains z coordinate for a given x and y in local Blender
+%   coordinates. Uses a heightmap file, which holds a list of coordinates 
+%   taken at regular 10m x and y intervals across the ground. The function
 %   interpolates between the heights of the corners of the square the input
 %   is in.
     x_factor = (x/10) - floor(x/10);
