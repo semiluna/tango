@@ -26,7 +26,7 @@ function schedule = scheduler_wrapper(newMission, coord_map, distance_cache, gcD
     if isKey(coord_map, start_key)
         indexStart = coord_map(start_key);
     else
-        indexStart = nodes + 1;
+        indexStart = nodes;
         nodes = nodes + 1;
         coord_map(start_key) = indexStart;
     end
@@ -34,7 +34,7 @@ function schedule = scheduler_wrapper(newMission, coord_map, distance_cache, gcD
     if isKey(coord_map, goal_key)
         indexGoal = coord_map(goal_key);
     else
-        indexGoal = nodes + 1;
+        indexGoal = nodes;
         nodes = nodes + 1;
         coord_map(goal_key) = indexGoal;
     end
