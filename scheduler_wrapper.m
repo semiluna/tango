@@ -1,6 +1,6 @@
 % add missions from user interface 
 
-function result = scheduler_wrapper(newMission, coord_map, nodes, distance_cache, gcDistance, mission_queue, left, right)
+function [nodes, distance_cache, gcDistance, new_mission_queue, left, right] = scheduler_wrapper(newMission, coord_map, nodes, distance_cache, gcDistance, mission_queue, left, right)
     cachedDistance = memoize(@compute_euclidian_distance);
     
     start = newMission(1,:);
@@ -63,15 +63,26 @@ function result = scheduler_wrapper(newMission, coord_map, nodes, distance_cache
 
    % add read mission to the mission queue
 
-%     mission_queue(right) = [indexStart indexGoal];
+    %    mission_queue(right) = [indexStart indexGoal];
     
     mission_queue = cat(1, mission_queue, [indexStart indexGoal]);
-
+    
     right = right + 1;
     solution = max_time_matching(right - left, size(nodes,1), 100, mission_queue, distance_cache, gcDistance);
     
     % what do to with the solution?
+    % convert back to lists of coordinates
     
-    result = solution;
+    new_mission_queue = zeros(right - 1, 2);
+    
+    for idx = 1:left-1
+        new_mission_queue(idx) = mission_queue(idx); % old missions, no need to re-order them
+    end
+    
+    for idx = left:(right-1)
+        new_mission_queue(idx, :) = mission_queue(solution(idx - left + 1), :);
+    end
+    
+    
     
 end
