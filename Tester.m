@@ -1,24 +1,34 @@
 
-control = GroundControl;
-waypoints = [
-    41.8839798 -87.6569366 50;
-    41.884243 -87.6569138 15;
-    41.8845825 -87.6566 15;
-    41.884243 -87.6569138 7;
-    41.884243 -87.6569138 9;
-    41.8839798 -87.6569366 15;
-    41.8845787 -87.6558151 0
-    ];
+control = GroundControl(@(p) pos(p), @() disp('Landed'));
+% waypoints = [
+%     52.21037894063447 0.091505848407285276 10;
+%     52.21143, 0.0894114 7;
+%     52.21083, 0.0891007 5;
+%     52.21128, 0.0873327 0;
+%     ];
 
+waypoints = [
+    52.2113 0.0888247 10;
+    52.21157 0.0891377 10;
+    52.21127 0.0893901 10;
+    52.21115 0.0895306 10;
+    52.21101 0.088753 10;
+    52.21127 0.0882007 0;
+];
 
 while(~control.sendWaypoints(waypoints))
 end
-time = clock;
+pause(5);
 for i = 1:10
-    pause(1);
-    pos = control.getPosition();
+    pause(3);
+    % control.isDroneIdle()
 end
 
-pause(50);
+pause(5);
 control.delete();
+
+function pos(position)
+    pause(3);
+    disp(position);
+end
 

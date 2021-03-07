@@ -48,6 +48,9 @@ classdef GroundControl < handle
         function complete = isUploadComplete(obj)
             complete = obj.Handler.isUploadComplete();
         end
+        function onGround = isDroneIdle(obj)
+            onGround = obj.Handler.Drone.onGround;
+        end
         function delete(obj)
             % Disconnects Ground Control from MAVLink network and cleans up
             % subscribers and heartbeat in Handler

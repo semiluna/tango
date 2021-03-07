@@ -152,7 +152,7 @@ classdef GCSHandler < handle
             handler.Drone.position = [double(msg.Payload.lat)/10^7 ...
                 double(msg.Payload.lon)/10^7 ...
                 double(msg.Payload.alt) /1000];
-            handler.posCallback(handler.Drone.position);
+            handler.PosCallback(handler.Drone.position);
         end
         function uavStateCallback(msg, handler)
             newState = msg.Payload.landed_state == enum2num(handler.IO.Dialect, 'MAV_LANDED_STATE', "MAV_LANDED_STATE_ON_GROUND");
