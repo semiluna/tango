@@ -1,0 +1,14 @@
+Team Tango's additions to the project can be accessed via the following steps:
+- install MatLab R2020b with the following add-ons:
+    - stateflow
+    - navigation toolbox
+    - aerospace blockset
+    - UAV toolbox interface for Unreal Engine Projects
+    - UAV toolbox
+    - Symbolic Math Toolbox
+    - Statistics and Machine Learning Toolbox
+
+
+- open the UAVPackageDelivery.prj project
+- click on the westCambridgeTango shortcut
+- etc. <to be finished later>
