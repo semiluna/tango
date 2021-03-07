@@ -23,7 +23,7 @@ classdef MAVLinkInterface < matlab.System & matlab.system.mixin.Propagates
     
     
     methods(Access = protected)
-        function [missionItems, missionCount, uploadComplete] = stepImpl(obj, UAVState)
+        function [missionItems, missionCount, uploadComplete] = stepImpl(obj, UAVState, HasLanded)
             % Implement algorithm. Calculate y as a function of input u and
             % discrete states.
             
@@ -85,6 +85,15 @@ classdef MAVLinkInterface < matlab.System & matlab.system.mixin.Propagates
                     
                     sendudpmsg(obj.IO, vfrHudMsg,'127.0.0.1',obj.GCSPort);
                     
+                case 4
+                    landStateMsg = obj.IO.Dialect.createmsg('EXTENDED_SYS_STATE');
+                    landStateMsg.Payload.vtol_state(:) = enum2num(obj.IO.Dialect, 'MAV_VTOL_STATE',"MAV_VTOL_STATE_UNDEFINED");
+                    if HasLanded
+                        landStateMsg.Payload.landed_state(:) = enum2num(obj.IO.Dialect, 'MAV_LANDED_STATE', "MAV_LANDED_STATE_ON_GROUND");
+                    else
+                        landStateMsg.Payload.landed_state(:) = enum2num(obj.IO.Dialect, 'MAV_LANDED_STATE', "MAV_LANDED_STATE_IN_AIR");
+                    end
+                    sendudpmsg(obj.IO, landStateMsg,'127.0.0.1',obj.GCSPort);
             end
             
             

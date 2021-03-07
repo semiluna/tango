@@ -21,6 +21,8 @@ classdef GCSHandler < handle
         HeartbeatSubscriber
         UAVPositionSubscriber
         UAVStateSubscriber
+        PosCallback
+        LandCallback
     end
     
     methods
@@ -28,6 +30,8 @@ classdef GCSHandler < handle
             %GCSHandler Construct an instance of this class
             %   Detailed explanation goes here
             obj.IO = io;
+            obj.PosCallback = posCallback;
+            obj.LandCallback = landCallback;
             obj.MissionRequestSubscriber = mavlinksub(io, 'MISSION_REQUEST_INT', ...
                 'BufferSize', 1, ...
                 'NewMessageFcn', ...
@@ -148,8 +152,13 @@ classdef GCSHandler < handle
             handler.Drone.position = [double(msg.Payload.lat)/10^7 ...
                 double(msg.Payload.lon)/10^7 ...
                 double(msg.Payload.alt) /1000];
+            handler.PosCallback(handler.Drone.position);
         end
         function uavStateCallback(msg, handler)
+            newState = msg.Payload.landed_state == enum2num(handler.IO.Dialect, 'MAV_LANDED_STATE', "MAV_LANDED_STATE_ON_GROUND");
+            if(~handler.Drone.onGround && newState)
+                handler.LandCallback();
+            end
             handler.Drone.onGround = ...
                 (msg.Payload.landed_state == enum2num(handler.IO.Dialect, 'MAV_LANDED_STATE', "MAV_LANDED_STATE_ON_GROUND"));
         end
