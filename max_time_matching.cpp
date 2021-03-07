@@ -24,7 +24,8 @@ public:
         for (int i = 0; i < nrMissions; i++) {
             int x = inputs[ 3 ][ i ][ 0 ];
             int y = inputs[ 3 ][ i ][ 1 ];
-            
+            x--;
+            y--;
             missions.push_back({ x, y });
         }
         
@@ -40,6 +41,10 @@ public:
             gcDistance.push_back(inputs[ 5 ][ i ]);
         
         vector <vector<int>> sol = shuffle_matching(missions, dist, gcDistance, flight_time);
+        
+        for (int i = 0; i < sol.size(); i++)
+            for (int j = 0; j < sol[ i ].size(); j++)
+                sol[ i ][ j ]++;
         
         matlab::data::ArrayFactory factory;
         for (int i = 0; i < sol.size(); i++) {

@@ -1,6 +1,6 @@
 % add missions from user interface 
 
-function schedule = scheduler_wrapper(newMission, coord_map, distance_cache, gcDistance, mission_queue, left, right)
+function result = scheduler_wrapper(newMission, coord_map, nodes, distance_cache, gcDistance, mission_queue, left, right)
     cachedDistance = memoize(@compute_euclidian_distance);
     
     start = newMission(1,:);
@@ -19,22 +19,21 @@ function schedule = scheduler_wrapper(newMission, coord_map, distance_cache, gcD
     gcDistancePickup = computeRRTStarRoute(groundControl, start);
     gcDistanceDelivery = computeRRTStarRoute(goal, groundControl);
 
-    nodes = coord_map.size(1);
     % now indexStart is the index of point start and indexGoal is the index of point goal
-
+    
     if isKey(coord_map, start_key)
         indexStart = coord_map(start_key);
     else
-        indexStart = nodes + 1;
-        nodes = nodes + 1;
+        indexStart = size(nodes,1) + 1;
+        nodes(indexStart,:) = start;
         coord_map(start_key) = indexStart;
     end
     
     if isKey(coord_map, goal_key)
         indexGoal = coord_map(goal_key);
     else
-        indexGoal = nodes + 1;
-        nodes = nodes + 1;
+        indexGoal = size(nodes,1) + 1;
+        nodes(indexGoal,:) = goal;
         coord_map(goal_key) = indexGoal;
     end
 
@@ -55,7 +54,7 @@ function schedule = scheduler_wrapper(newMission, coord_map, distance_cache, gcD
         mission = mission_queue(index); % pair of indices (indexStart, indexGoal)
         indexNextStart = mission(2); % next pickup point
 
-        nextRoute = computeRRTStarRoute(indexGoal, indexNextStart);
+        nextRoute = computeRRTStarRoute(nodes(indexGoal), nodes(indexNextStart));
         distance_cache(indexGoal, indexNextStart) = cachedDistance(nextRoute);
         distance_cache(indexNextStart, indexGoal) = cachedDistance(nextRoute);
     end
@@ -68,10 +67,10 @@ function schedule = scheduler_wrapper(newMission, coord_map, distance_cache, gcD
     mission_queue = cat(1, mission_queue, [indexStart indexGoal]);
 
     right = right + 1;
-    solution = max_time_matching(right - left, nodes, 100, mission_queue, distance_cache, gcDistance);
+    solution = max_time_matching(right - left, size(nodes,1), 100, mission_queue, distance_cache, gcDistance);
     
     % what do to with the solution?
     
-    schedule = solution;
+    result = solution;
     
 end
