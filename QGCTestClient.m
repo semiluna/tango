@@ -3,7 +3,7 @@ io = mavlinkio('common.xml', ...
             'ComponentType', 'MAV_TYPE_QUADROTOR', ...
             'AutopilotType', 'MAV_AUTOPILOT_GENERIC');
 io.connect("UDP");
-a = mavlinksub(io, 'BufferSize', 10, 'NewMessageFcn', @(~, msg) disp("A: " + msg.SystemID));            
+a = mavlinksub(io, 'BufferSize', 50, 'NewMessageFcn', @(~, msg) display_commands(msg));            
 
 heartbeatmsg = io.Dialect.createmsg('HEARTBEAT');
 heartbeatmsg.Payload.autopilot(:) = uint8(io.Dialect.enum2num('MAV_AUTOPILOT', 'MAV_AUTOPILOT_GENERIC'));
@@ -30,12 +30,13 @@ io.sendmsg(request);
 
 pause(40);
 delete(a);
-delete(b);
 stop(Heartbeat);
 delete(Heartbeat); 
 io.disconnect();
 
 function heart(a, b)
-    listTopics(a)
     sendudpmsg(a,b, '127.0.0.1', 14550);
+end
+function display_commands(msg)
+    disp(msg);
 end

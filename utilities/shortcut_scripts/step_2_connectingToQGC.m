@@ -32,7 +32,7 @@ startFlightTime = 5;
 useQGC = 1;
 
 % Set pacing to clock-time so you can "fly" the aircraft as in real flight
-set_param('uavPackageDelivery','EnablePacing', 'on');
+set_param('uavPackageDelivery','EnablePacing', 'off');
 
 % Simulation Stop Time
 simTime = 350;
