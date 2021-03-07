@@ -26,7 +26,7 @@ classdef GCSHandler < handle
     end
     
     methods
-        function obj = GCSHandler(io)
+        function obj = GCSHandler(io, posCallback, landCallback)
             %GCSHandler Construct an instance of this class
             %   Detailed explanation goes here
             obj.IO = io;
