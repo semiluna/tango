@@ -9,8 +9,9 @@ function schedule = scheduler_wrapper(newMission, coord_map, distance_cache, gcD
     start_key = num2str(start);
     goal_key = num2str(goal);
 
-    % start and goal are longitude and latitude, groundControl is the
-    % middle of the map
+    % start and goal are longitude and latitude, groundControl is not the
+    % middle of the map, its a place easy to navigate to, and where the
+    % shed is
 
     route = computeRRTStarRoute(start, goal);
 
