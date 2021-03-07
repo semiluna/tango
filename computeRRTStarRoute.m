@@ -17,8 +17,8 @@ end
 
 %translate input coords to world coords
 if useLatLongCoords
-    start = LongLatToWorld(start);
-    goal = LongLatToWorld(goal);
+    start = LatLongToWorld(start);
+    goal = LatLongToWorld(goal);
 end
 
 %transform start and goal such that they are on the omap coord frame
@@ -54,9 +54,9 @@ if pthObj == -1 || pthObj == -2
 end
 
 %show route on figure
-%  omap.show;
-%  hold on;
-%  plot(pthObj.States(:,1),pthObj.States(:,2),'r-','LineWidth',2); % draw path
+  omap.show;
+  hold on;
+  plot(pthObj.States(:,1),pthObj.States(:,2),'r-','LineWidth',2); % draw path
 
 %untransform back to world coords
 basicRoute = pthObj.States(:,1:2);
@@ -69,7 +69,7 @@ endHeight = getHeight(basicRoute(length(basicRoute),1), basicRoute(length(basicR
 %convert from world coords back to latlong
 if useLatLongCoords
     for i=1:length(basicRoute)
-        longLat = WorldToLongLat([basicRoute(i,1), basicRoute(i,2)]);
+        longLat = WorldToLatLong([basicRoute(i,1), basicRoute(i,2)]);
         basicRoute(i,1) = longLat(1);
         basicRoute(i,2) = longLat(2);
     end

@@ -26,7 +26,7 @@ classdef GCSHandler < handle
     end
     
     methods
-        function obj = GCSHandler(io, posCallback, landCallback)
+        function obj = GCSHandler(io)
             %GCSHandler Construct an instance of this class
             %   Detailed explanation goes here
             obj.IO = io;
@@ -160,8 +160,9 @@ classdef GCSHandler < handle
                 handler.LandCallback();
             end
             handler.Drone.onGround = ...
-                newState;
+                (msg.Payload.landed_state == enum2num(handler.IO.Dialect, 'MAV_LANDED_STATE', "MAV_LANDED_STATE_ON_GROUND"));
         end
         
     end
 end
+

@@ -24,7 +24,8 @@ public:
         for (int i = 0; i < nrMissions; i++) {
             int x = inputs[ 3 ][ i ][ 0 ];
             int y = inputs[ 3 ][ i ][ 1 ];
-            
+            x--;
+            y--;
             missions.push_back({ x, y });
         }
         
@@ -39,12 +40,18 @@ public:
         for (int i = 0; i < nodes; i++)
             gcDistance.push_back(inputs[ 5 ][ i ]);
         
-        vector <vector<int>> sol = shuffle_matching(missions, dist, gcDistance, flight_time);
+        vector <vector<int>> sol_aux = shuffle_matching(missions, dist, gcDistance, flight_time);
+        vector <int> sol;
+        
+        for (int i = 0; i < sol_aux.size(); i++)
+            for (int j = 0; j < sol_aux[ i ].size(); j++)  {
+                sol_aux[ i ][ j ]++;
+                sol.push_back(sol_aux[ i ][ j ]);
+            }
         
         matlab::data::ArrayFactory factory;
-        for (int i = 0; i < sol.size(); i++) {
-            outputs[ i ] = factory.createArray<int32_t> ({1, sol[ i ].size()}, sol[ i ].data(), sol[ i ].data() + sol[ i ].size());
-        }
+        outputs[ 0 ] = factory.createArray<int32_t> ({1, sol.size()}, sol.data(), sol.data() + sol.size());
+      
     }
     
     int partitionMissions(vector <int> &trial, vector<pair<int, int>> &missions, int maxFlightTime, vector<vector<int>> &dist, vector<int> &gcDistance, vector<vector<int>> &partitionTrial) {

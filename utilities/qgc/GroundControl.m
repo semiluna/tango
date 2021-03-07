@@ -18,14 +18,14 @@ classdef GroundControl < handle
         
     end
     methods(Access = public)
-        function obj = GroundControl(PosCallback, LandCallback)
+        function obj = GroundControl()
             % Perform one-time calculations, such as computing constants
             obj.IO = mavlinkio('common.xml', ...
             'SystemID', obj.SystemID, 'ComponentID', obj.ComponentID, ...
             'ComponentType', 'MAV_TYPE_GCS', ...
             'AutopilotType', 'MAV_AUTOPILOT_INVALID');
             obj.IO.connect("UDP", 'LocalPort', obj.GCSPort);
-            obj.Handler = GCSHandler(obj.IO, PosCallback, LandCallback);
+            obj.Handler = GCSHandler(obj.IO);
         end
         
         function rotation = getRotation(obj)
