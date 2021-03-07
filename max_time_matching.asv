@@ -1,0 +1,24 @@
+#include <fstream>
+#include <algorithm>
+#include <random>
+#include <vector>
+#include <chrono>
+
+using namespace std;
+using matlab::mex::ArgumentList;
+
+class MexFunction : public matlab::mex::Function {
+public:
+    void operator() (ArgumentList, outputs, ArgumentList inputs) {
+        const int missions = inputs[ 0 ][ 0 ];
+        const int nodes = inputs[ 1 ][ 0 ];
+        const int flight_time = inputs[ 2 ][ 0 ];
+        
+        vector<vector<int>> dist(nodes, vector<int>(nodes));
+        for (int i = 0; i < nodes; i++) {
+            for (int j = 0; j < nodes; j++) {
+                dist[ i ][ j ] = inputs[ 1 ][ i ][ j ];
+            }
+        }
+        
+    }
