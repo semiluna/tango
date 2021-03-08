@@ -1,6 +1,6 @@
 % add missions from user interface 
 
-function [nodes, distance_cache, gcDistance, new_mission_queue, left, right] = scheduler_wrapper(newMission, coord_map, nodes, distance_cache, gcDistance, mission_queue, left, right)
+function solution = scheduler_wrapper(newMission, coord_map, nodes, distance_cache, gcDistance, mission_queue, left, right)
     cachedDistance = memoize(@compute_euclidian_distance);
     
     start = newMission(1,:);
@@ -52,10 +52,11 @@ function [nodes, distance_cache, gcDistance, new_mission_queue, left, right] = s
     % compute distances from point "goal" to every other possible
     % "pickup" point
     for index = left : (right - 1)
-        mission = mission_queue(index); % pair of indices (indexStart, indexGoal)
+        mission = mission_queue(index, :); % pair of indices (indexStart, indexGoal)
+        disp(mission);
         indexNextStart = mission(2); % next pickup point
 
-        nextRoute = computeRRTStarRoute(nodes(indexGoal), nodes(indexNextStart));
+        nextRoute = computeRRTStarRoute(nodes(indexGoal, :), nodes(indexNextStart, :));
         distance_cache(indexGoal, indexNextStart) = cachedDistance(nextRoute);
         distance_cache(indexNextStart, indexGoal) = cachedDistance(nextRoute);
     end
@@ -83,6 +84,6 @@ function [nodes, distance_cache, gcDistance, new_mission_queue, left, right] = s
         new_mission_queue(idx, :) = mission_queue(solution(idx - left + 1), :);
     end
     
-    
+    solution = {nodes, distance_cache, gcDistance, new_mission_queue, left, right};
     
 end
