@@ -116,21 +116,32 @@ classdef GCSHandler < handle
             outMsg.Payload.target_component(:) = 1;
             outMsg.Payload.seq(:) = msg.Payload.seq;
             outMsg.Payload.frame(:) = enum2num(handler.IO.Dialect,'MAV_FRAME',"MAV_FRAME_GLOBAL");
+            outMsg.Payload.autocontinue(:) = 1;
+            outMsg.Payload.current(:) = 0;
             %TODO: ENTER VALUES FOR PARAM1,..., PARAM4
             if msg.Payload.seq == 0 
                 outMsg.Payload.command(:) = enum2num(handler.IO.Dialect,'MAV_CMD',"MAV_CMD_NAV_TAKEOFF");
-                outMsg.Payload.param1(:) = 0;
+                outMsg.Payload.param1(:) = 15;
+                outMsg.Payload.param2(:) = 0;
+                outMsg.Payload.param3(:) = 0;
+                outMsg.Payload.current(:) = 1;
                 outMsg.Payload.param4(:) = nan;
             else
                 if msg.Payload.seq == handler.Drone.missionLength - 1
                     outMsg.Payload.command(:) = enum2num(handler.IO.Dialect, 'MAV_CMD', "MAV_CMD_NAV_LAND");
+                    outMsg.Payload.param1(:) = 0;
+                    outMsg.Payload.param2(:) = 0;
+                    outMsg.Payload.param3(:) = 0;
+                    outMsg.Payload.param4(:) = nan;
                 else
                     outMsg.Payload.command(:) = enum2num(handler.IO.Dialect, 'MAV_CMD', "MAV_CMD_NAV_WAYPOINT");
+                    outMsg.Payload.param1(:) = 0;
+                    outMsg.Payload.param2(:) = 0;
+                    outMsg.Payload.param3(:) = 0;
+                    outMsg.Payload.param4(:) = nan;
                 end 
             end
             
-            outMsg.Payload.current(:) = 0;
-            outMsg.Payload.autocontinue(:) = 1;
             if(isempty(handler.Drone.waypoints))
                 disp("Empty")
             else
