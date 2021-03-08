@@ -1,4 +1,7 @@
 function solution = updateState(newMission, groundControl, coord_map, nodes, distance_cache, gcDistance, pendingMissions)
+    
+    cachedDistance = memoize(@compute_euclidian_distance);
+
     start = newMission(1,:);
     goal = newMission(2,:);
     

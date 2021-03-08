@@ -2,7 +2,7 @@
 % Application.
 
 % Ground control station coordinates
-droneStartLocation = [52.20954726481548, 0.09000709627050027, 17.0364];
+% droneStartLocation = [52.20954726481548, 0.09000709627050027, 17.0364];
 
 % Set guidance type to Full Guidance
 guidanceType = 1;
@@ -11,7 +11,7 @@ guidanceType = 1;
 isDroneMulticopter = 1;
 
 % Use photorealistic environment
-isPhotoRealisticSim = 2;
+isPhotoRealisticSim = 0;
 
 % Low fidelity plant model 
 plantModelFi = 0;
