@@ -43,11 +43,10 @@ public:
         vector <vector<int>> sol_aux = shuffle_matching(missions, dist, gcDistance, flight_time);
         vector <int> sol;
         
-        for (int i = 0; i < sol_aux.size(); i++)
-            for (int j = 0; j < sol_aux[ i ].size(); j++)  {
-                sol_aux[ i ][ j ]++;
-                sol.push_back(sol_aux[ i ][ j ]);
-            }
+        for (int j = 0; j < sol_aux[ 0 ].size(); j++)  {
+            sol_aux[ 0 ][ j ]++;
+            sol.push_back(sol_aux[ 0 ][ j ]);
+        }
         
         matlab::data::ArrayFactory factory;
         outputs[ 0 ] = factory.createArray<int32_t> ({1, sol.size()}, sol.data(), sol.data() + sol.size());
