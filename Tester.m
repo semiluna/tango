@@ -17,7 +17,6 @@ waypoints = [
 
 while(~control.sendWaypoints(waypoints))
 end
-pause(60);
 waypoints = [
     52.21070947329772, 0.0916829041702556, 10;
     52.2105839855197, 0.09141860574823113, 10;
@@ -25,8 +24,8 @@ waypoints = [
     52.21047126958006, 0.09183336914713891, 10;
     52.210386007121166, 0.09154526938584695, 0; 
 ];
-while(~control.sendWaypoints(waypoints))
-end
+
+
 pause(10);
 control.delete();
 
@@ -35,10 +34,10 @@ function pos()
 end
 
 % while length(waypoints) < 20
-%     difference = diff(waypoints);
-%     distance_list = [];
+%     difference = diff(waypoints(:, 1:2));
+%     distance_list = zeros(1, length(waypoints) -1);
 %     for i = 1:(length(waypoints)-1)
-%         distance_list = norm(difference(i, :));
+%         distance_list(i) = norm(difference(i, :));
 %     end
 %     [~, maxIdx] = max(distance_list);
 %     newPoint = (waypoints(maxIdx, :) + waypoints(maxIdx+1, :))/2;
@@ -46,6 +45,6 @@ end
 % end
 % 
 % waypoints
-% 
+
 
 

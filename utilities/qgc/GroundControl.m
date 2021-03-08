@@ -45,10 +45,10 @@ classdef GroundControl < handle
             end
             
             while length(waypoints) < 20
-                difference = diff(waypoints);
-                distance_list = [];
+                difference = diff(waypoints(:, 1:2));
+                distance_list = zeros(1, length(waypoints) -1);
                 for i = 1:(length(waypoints)-1)
-                    distance_list = norm(difference(i, :));
+                    distance_list(i) = norm(difference(i, :));
                 end
                 [~, maxIdx] = max(distance_list);
                 newPoint = (waypoints(maxIdx, :) + waypoints(maxIdx+1, :))/2;
