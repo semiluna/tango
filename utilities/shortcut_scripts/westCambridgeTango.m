@@ -41,7 +41,7 @@ set_param('uavPackageDelivery','EnablePacing', 'off');
 simTime =inf;
 
 %open UI
-app1;
+%app1;
 
 %Show the CPA Scope
 close_system('uavPackageDelivery/On Board Computer/DataProcessing/ProcessSensorData/CPA');
