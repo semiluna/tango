@@ -3,7 +3,8 @@ io = mavlinkio('common.xml', ...
             'ComponentType', 'MAV_TYPE_QUADROTOR', ...
             'AutopilotType', 'MAV_AUTOPILOT_GENERIC');
 io.connect("UDP");
-a = mavlinksub(io, 'BufferSize', 50, 'NewMessageFcn', @(~, msg) display_commands(msg));            
+client = mavlinkclient(io, 255, 190);
+a = mavlinksub(io, client, 'MISSION_ITEM_INT', 'BufferSize', 50,  'NewMessageFcn', @(~, msg) display_commands(msg));            
 
 heartbeatmsg = io.Dialect.createmsg('HEARTBEAT');
 heartbeatmsg.Payload.autopilot(:) = uint8(io.Dialect.enum2num('MAV_AUTOPILOT', 'MAV_AUTOPILOT_GENERIC'));
@@ -19,16 +20,7 @@ Heartbeat.StartDelay = 0;
 Heartbeat.TimerFcn = (@(~,~) heart(io, heartbeatmsg));
 
 start(Heartbeat);
-msg = dialect.createmsg('MISSION_COUNT');
-            msg.Payload.target_system(:) = 1;
-            msg.Payload.target_component(:) = 1;
-            msg.Payload.count(:) = length(obj.Drone.waypoints);
-            msg.Payload.mission_type(:) = enum2num(dialect, 'MAV_MISSION_TYPE',"MAV_MISSION_TYPE_MISSION");
-            obj.IO.sendmsg(msg);
-
-io.sendmsg(request);
-
-pause(40);
+pause(50);
 delete(a);
 stop(Heartbeat);
 delete(Heartbeat); 
