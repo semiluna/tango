@@ -43,6 +43,18 @@ classdef GroundControl < handle
             if(~valid)
                 return;
             end
+            
+            while length(waypoints) < 20
+                difference = diff(waypoints(:, 1:2));
+                distance_list = zeros(1, length(waypoints) -1);
+                for i = 1:(length(waypoints)-1)
+                    distance_list(i) = norm(difference(i, :));
+                end
+                [~, maxIdx] = max(distance_list);
+                newPoint = (waypoints(maxIdx, :) + waypoints(maxIdx+1, :))/2;
+                waypoints = [waypoints(1:maxIdx, :); newPoint; waypoints(maxIdx+1:end, :)];
+            end
+            
             obj.Handler.sendWaypoints(waypoints);
         end
         function complete = isUploadComplete(obj)
