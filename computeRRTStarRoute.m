@@ -34,6 +34,19 @@ if start(1) < 40 || start(1) > 1120 || goal(1) < 40 || goal(1) > 1120 || start(2
     return;
 end
 
+%make the lower coord first, so the cache works in both directions
+if start(1) < goal(1)
+    coordsFlipped = false;
+elseif start(1) == goal(1)
+    coordsFlipped = start(2) > goal(2);
+else
+    coordsFlipped = true;
+end
+
+if coordsFlipped
+    [start, goal] = deal(goal, start);
+end
+
 %plan route
 if useCache
     cachedPlanner = memoize(@planRRTStarPath);
@@ -54,13 +67,18 @@ if pthObj == -1 || pthObj == -2
 end
 
 %show route on figure
-  omap.show;
-  hold on;
-  plot(pthObj.States(:,1),pthObj.States(:,2),'r-','LineWidth',2); % draw path
+%   omap.show;
+%   hold on;
+%   plot(pthObj.States(:,1),pthObj.States(:,2),'r-','LineWidth',2); % draw path
 
 %untransform back to world coords
 basicRoute = pthObj.States(:,1:2);
 basicRoute = basicRoute - omap.GridSize/2;
+
+%flip coords back if needed
+if coordsFlipped
+   basicRoute = flip(basicRoute);
+end
 
 %get the takeoff and landing z coords
 startHeight = getHeight(basicRoute(1,1), basicRoute(1,2));
