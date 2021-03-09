@@ -166,12 +166,13 @@ classdef GCSHandler < handle
             handler.PosCallback(handler.Drone.position);
         end
         function uavStateCallback(msg, handler)
-            newState = msg.Payload.landed_state == enum2num(handler.IO.Dialect, 'MAV_LANDED_STATE', "MAV_LANDED_STATE_ON_GROUND");
-            if(~handler.Drone.onGround && newState)
+            isOnGround = msg.Payload.landed_state == enum2num(handler.IO.Dialect, 'MAV_LANDED_STATE', "MAV_LANDED_STATE_ON_GROUND");
+            wasOnGround = handler.Drone.onGround;
+            
+            handler.Drone.onGround = isOnGround;
+            if(~wasOnGround && isOnGround)
                 handler.LandCallback();
             end
-            handler.Drone.onGround = ...
-                (msg.Payload.landed_state == enum2num(handler.IO.Dialect, 'MAV_LANDED_STATE', "MAV_LANDED_STATE_ON_GROUND"));
         end
         
     end
