@@ -11,7 +11,7 @@ guidanceType = 1;
 isDroneMulticopter = 1;
 
 % Use photorealistic environment
-isPhotoRealisticSim = 0;
+isPhotoRealisticSim = 2;
 
 % Low fidelity plant model 
 plantModelFi = 0;
@@ -42,6 +42,10 @@ simTime =inf;
 
 %open UI
 app1;
+
+pause(5);
+
+sim('uavPackageDelivery',simTime);
 
 %Show the CPA Scope
 close_system('uavPackageDelivery/On Board Computer/DataProcessing/ProcessSensorData/CPA');
