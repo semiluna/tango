@@ -11,7 +11,7 @@ guidanceType = 1;
 isDroneMulticopter = 1;
 
 % Use photorealistic environment
-isPhotoRealisticSim = 0;
+isPhotoRealisticSim = 2;
 
 % Low fidelity plant model 
 plantModelFi = 0;
