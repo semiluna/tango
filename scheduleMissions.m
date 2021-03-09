@@ -21,13 +21,6 @@ function solution = scheduleMissions(coord_map, nodes, distance_cache, gcDistanc
         end
     end
     
-    disp('Pending');
-    disp(pendingMissions);
-    disp('SM');
-    disp(scheduledMissions);
-    disp('Temp');
-    disp(temp);
-    
     solution = {scheduledMissions, temp};
 
 end

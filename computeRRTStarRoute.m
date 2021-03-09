@@ -81,8 +81,9 @@ if coordsFlipped
 end
 
 %get the takeoff and landing z coords
-startHeight = getHeight(basicRoute(1,1), basicRoute(1,2));
-endHeight = getHeight(basicRoute(length(basicRoute),1), basicRoute(length(basicRoute),2));
+landingOffset = 2;
+startHeight = getHeight(basicRoute(1,1), basicRoute(1,2)) + landingOffset;
+endHeight = getHeight(basicRoute(length(basicRoute),1), basicRoute(length(basicRoute),2)) + landingOffset;
 
 %convert from world coords back to latlong
 if useLatLongCoords
@@ -96,7 +97,10 @@ end
 %add z coords to all points and put into nx3 matrix
 route = zeros(length(basicRoute)+2, 3);
 route(1, :) = [basicRoute(1,1), basicRoute(1,2), startHeight];
+
+flightHeight = 20;
+
 for i =1:length(basicRoute)
-   route(i+1, :) = [basicRoute(i,1), basicRoute(i,2), 35];
+   route(i+1, :) = [basicRoute(i,1), basicRoute(i,2), flightHeight];
 end
 route(length(route), :) = [basicRoute(length(basicRoute),1), basicRoute(length(basicRoute), 2), endHeight];
