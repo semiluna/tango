@@ -20,7 +20,7 @@ plantModelFi = 0;
 showLidarPointCloud = 0;
 
 % Show the Video Viewer
-showVideoViewer = 1;
+showVideoViewer = 0;
 
 % Show the UAV Animation as it flies
 showUAVAnimation = 1;

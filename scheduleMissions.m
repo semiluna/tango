@@ -2,7 +2,7 @@ function solution = scheduleMissions(coord_map, nodes, distance_cache, gcDistanc
     
     % give the next set of missions to execute
     
-    nextSet = max_time_matching(size(pendingMissions, 1), size(nodes,1), 1000, pendingMissions, distance_cache, gcDistance);
+    nextSet = max_time_matching(size(pendingMissions, 1), size(nodes,1), 10000, pendingMissions, distance_cache, gcDistance);
     
     scheduledMissions = zeros(size(nextSet, 1), 2);
     
