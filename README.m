@@ -1,5 +1,6 @@
+# West Cambridge Airfreight
 Team Tango's additions to the project can be accessed via the following steps:
-- install MatLab R2020b with the following add-ons:
+- Install MATLAB R2020b with the following add-ons:
     - Stateflow
     - Navigation Toolbox
     - Aerospace Blockset
@@ -14,7 +15,7 @@ Team Tango's additions to the project can be accessed via the following steps:
     - Aerospace Toolbox
 
 - Open the project folder in MATLAB
-- Open the UAVPackageDelivery.prj project in Simulink by double clicking it in the file explorer
-- Type "westCambridgeTango" into the MATLAB command window to run the preparation shortcut
+- Open the `UAVPackageDelivery.prj` project in Simulink by double clicking it in the file explorer
+- Type `westCambridgeTango` into the MATLAB command window to run the preparation shortcut
 - After the UI window opens, run the model from the Simulink window (green button at the top)
 - Wait for the photorealistic simulation to appear before attempting to upload any missions
