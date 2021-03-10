@@ -14,20 +14,25 @@ def getVertices():
         if v.select:
             print(tuple(v.co) )
             
-def h():
+def getAllVertices():
     with open("C:\\Users\\weath\\OneDrive - University of Cambridge\\Comp Sci. 1B\\Group Project\\blender stuff\\vertices.txt", "w") as f:
+        # loop through objects
         for obj in bpy.context.scene.objects:
             try:
                 obj_dat = obj.data
+                #write object name to file
                 f.write(obj.name + ":\n")
                 bm = bmesh.from_edit_mesh(obj_dat)
                 bm.faces.active = None
+                # loop through vertices
                 for v in bm.verts:
+                    # write coordinates to file
                     f.write(str(tuple(v.co)) + "\n")
                 f.write("\n\n")
             except Exception as err:
                 print("Error: {0}".format(err))
 
+# returns location at which ray collides with obj
 def obj_ray_cast(obj, matrix, ray_origin, ray_target):
     """Wrapper for ray casting that moves the ray into object space"""
     # get the ray relative to the object
@@ -42,6 +47,7 @@ def obj_ray_cast(obj, matrix, ray_origin, ray_target):
     else:
         return None, None, None
 
+# returns z-coordinate of ground at regular 10m intervals and offsets the samples to get the result in global coordinates
 def heightMap(obj):
     with open("C:\\Users\\weath\\OneDrive - University of Cambridge\\Comp Sci. 1B\\Group Project\\blender stuff\\heightmap.txt", "w") as f:
         for x in range(-55, 52):
@@ -50,7 +56,7 @@ def heightMap(obj):
                 if location != None:
                     location = obj.matrix_world @ location
                     location = location + Vector((0,44.9522,0))
-                    location = "(" + str(round(location[0])) + "," + str(round(location[1])) + "," + str(location[2]) + ")"
+                    location = "(" + str(round(location[0])) + "," + str(round(location[1])) + "," + str(location[2]/1.631) + ")"
                 f.write(location)
                 if y != 30:
                     f.write(", ")
@@ -58,4 +64,8 @@ def heightMap(obj):
             if x != 51:
                 f.write("\n")
 
+
+# example function calls:
+
 # heightMap(bpy.data.objects['EXPORT_GOOGLE_SAT_WM'])
+# obj_ray_cast(bpy.data.objects['EXPORT_GOOGLE_SAT_WM'], bpy.data.objects['EXPORT_GOOGLE_SAT_WM'].matrix_world, Vector((12, 12, 0)), Vector((12,12,100)))
