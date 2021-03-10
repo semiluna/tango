@@ -1,5 +1,5 @@
 # West Cambridge Airfreight
-Team Tango's additions to the project can be accessed via the following steps:
+You can see the project in action through the following steps:
 - Install MATLAB R2020b with the following add-ons:
     - Stateflow
     - Navigation Toolbox
