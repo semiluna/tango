@@ -9,8 +9,6 @@ function set_up_project()
 uiopen('uavPackageDelivery', 1);
 load_system('photorealisticSimulationEngi');
 
-edit('UAVPackageDeliveryExample.mlx');
-
 %% Set directory specific parameters
 
 evalin('base', 'modelInit;'); 
