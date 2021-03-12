@@ -23,7 +23,7 @@ showLidarPointCloud = 0;
 showVideoViewer = 0;
 
 % Show the UAV Animation as it flies
-showUAVAnimation = 1;
+showUAVAnimation = 0;
 
 % Use heading in the guidance model
 useHeading = 1;
